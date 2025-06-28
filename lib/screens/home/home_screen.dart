@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:islami_c15_st/screens/home/widgets/nav_bar_item.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const String route = "home";
+  static const String route = "Home";
   HomeScreen({super.key});
 
   @override
