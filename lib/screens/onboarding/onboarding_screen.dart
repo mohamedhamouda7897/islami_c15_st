@@ -4,7 +4,7 @@ import 'package:islami_c15_st/screens/home/home_screen.dart';
 import 'package:islami_c15_st/screens/onboarding/widgets/onboarding_widget.dart';
 
 class OnboardingScreen extends StatelessWidget {
-  static const String route = 'onboarding';
+  static const String route = 'onBoarding';
   List<OnBoardingScreenData> data = [
     OnBoardingScreenData(title: 'Welcome To Islmi App', image: '1', body: ''),
     OnBoardingScreenData(
