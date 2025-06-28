@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:islami_c15_st/screens/home/tabs/ahadeth_tab.dart';
+import 'package:islami_c15_st/screens/home/tabs/quran_tab.dart';
+import 'package:islami_c15_st/screens/home/tabs/radio_tab.dart';
+import 'package:islami_c15_st/screens/home/tabs/sebha_tab.dart';
+import 'package:islami_c15_st/screens/home/tabs/time_tab.dart';
 import 'package:islami_c15_st/screens/home/widgets/nav_bar_item.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String route = "Home";
+
   HomeScreen({super.key});
 
   @override
@@ -25,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        body: tabs[currentIndex],
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
@@ -81,4 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  List<Widget> tabs = [
+    QuranTab(),
+    AhadethTab(),
+    SebhaTab(),
+    RadioTab(),
+    TimeTab()
+  ];
 }
