@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:islami_c15_st/cache/helper.dart';
 import 'package:islami_c15_st/data/onboarding_screen_data.dart';
 import 'package:islami_c15_st/screens/home/home_screen.dart';
 import 'package:islami_c15_st/screens/onboarding/widgets/onboarding_widget.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends StatefulWidget {
   static const String route = 'onBoarding';
+
+  OnboardingScreen({super.key});
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
   List<OnBoardingScreenData> data = [
     OnBoardingScreenData(title: 'Welcome To Islmi App', image: '1', body: ''),
     OnBoardingScreenData(
@@ -29,8 +38,16 @@ class OnboardingScreen extends StatelessWidget {
           'You can listen to the Holy Quran Radio through the application for free and easily',
     ),
   ];
+
   PageController pageController = PageController();
-  OnboardingScreen({super.key});
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    CacheHelper.cacheData("flag", true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

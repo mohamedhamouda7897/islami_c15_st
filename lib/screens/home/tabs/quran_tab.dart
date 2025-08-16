@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islami_c15_st/cache/helper.dart';
+import 'package:islami_c15_st/data/quran_model.dart';
 import 'package:islami_c15_st/screens/home/widgets/horzental_sura_name_item.dart';
 import 'package:islami_c15_st/screens/home/widgets/sura_name_item.dart';
+import 'package:islami_c15_st/screens/sura_details_screen/sura_details_screen.dart';
 
-class QuranTab extends StatelessWidget {
+import '../../../data/sura_details_model.dart';
+
+class QuranTab extends StatefulWidget {
   QuranTab({super.key});
 
+  @override
+  State<QuranTab> createState() => _QuranTabState();
+}
+
+class _QuranTabState extends State<QuranTab> {
   List<int> suraVerseCounts = [
     7,
     286,
@@ -357,21 +367,63 @@ class QuranTab extends StatelessWidget {
     "الناس"
   ];
 
+  List<QuranModel> quranList = [];
+  var _searchController = TextEditingController();
+
+  List<QuranModel> filteredData = [];
+
+  generateQuranList() {
+    for (int i = 0; i < suraNames.length; i++) {
+      quranList.add(QuranModel(
+          nameAr: suraNames[i],
+          nameEn: suraNamesEn[i],
+          numOfVerses: suraVerseCounts[i],
+          index: i));
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    generateQuranList();
+    filteredData = quranList;
+    _searchController.addListener(filterList);
+  }
+
+  void filterList() {
+    String query = _searchController.text.toLowerCase(); // al
+    filteredData = quranList.where(
+      (element) {
+        return element.nameEn.toLowerCase().contains(query) ||
+            element.nameAr.toLowerCase().contains(query);
+      },
+    ).toList();
+
+    // CacheHelper.init()
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
+  }
+
+  List<String> recently = CacheHelper.getData("quran") ?? [];
+
   @override
   Widget build(BuildContext context) {
+    recently = CacheHelper.getData("quran") ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: 20,
-        ),
-        Image.asset("assets/images/appbar_logo.png"),
         SizedBox(
           height: 21,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: TextField(
+            controller: _searchController,
             style: GoogleFonts.elMessiri(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -397,38 +449,49 @@ class QuranTab extends StatelessWidget {
         SizedBox(
           height: 21,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            "Most Recently",
-            style: GoogleFonts.elMessiri(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFFEFFE8)),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.only(left: 20),
-          height: 150,
-          child: ListView.separated(
-            separatorBuilder: (context, index) => SizedBox(
-              width: 10,
+        if (recently.length != 0) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              "Most Recently",
+              style: GoogleFonts.elMessiri(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFEFFE8)),
             ),
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              return hHorizontalSuraNameItem(
-                nameAr: suraNames[index],
-                index: index + 1,
-                nameEn: suraNamesEn[index],
-                numOfVerses: suraVerseCounts[index],
-              );
-            },
-            itemCount: suraNames.length,
           ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
+          Container(
+            padding: EdgeInsets.only(left: 20),
+            height: 150,
+            child: ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(
+                width: 10,
+              ),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, SuraDetailsScreen.route,
+                        arguments: SuraDetailsModel(
+                            suraNamesEn[int.parse(recently[index])],
+                            suraNames[int.parse(recently[index])],
+                            int.parse(recently[index]) + 1));
+                  },
+                  child: hHorizontalSuraNameItem(
+                    nameAr: suraNames[int.parse(recently[index])],
+                    index: index + 1,
+                    nameEn: suraNamesEn[int.parse(recently[index])],
+                    numOfVerses: suraVerseCounts[int.parse(recently[index])],
+                  ),
+                );
+              },
+              itemCount: recently.length,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+        ],
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
@@ -454,14 +517,30 @@ class QuranTab extends StatelessWidget {
               ),
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) {
-                return SuraNameItem(
-                  nameAr: suraNames[index],
-                  index: index + 1,
-                  nameEn: suraNamesEn[index],
-                  numOfVerses: suraVerseCounts[index],
+                return InkWell(
+                  onTap: () async {
+                    List<String> mostRecently =
+                        CacheHelper.getData("quran") ?? [];
+                    if (!mostRecently.contains(index.toString())) {
+                      mostRecently.insert(0, index.toString());
+                    }
+
+                    await CacheHelper.cacheData("quran", mostRecently);
+
+                    setState(() {});
+                    Navigator.pushNamed(context, SuraDetailsScreen.route,
+                        arguments: SuraDetailsModel(
+                            suraNamesEn[index], suraNames[index], index + 1));
+                  },
+                  child: SuraNameItem(
+                    nameAr: filteredData[index].nameAr,
+                    index: filteredData[index].index + 1,
+                    nameEn: filteredData[index].nameEn,
+                    numOfVerses: filteredData[index].numOfVerses,
+                  ),
                 );
               },
-              itemCount: suraNames.length,
+              itemCount: filteredData.length,
             ),
           ),
         )

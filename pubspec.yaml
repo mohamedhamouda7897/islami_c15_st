@@ -38,6 +38,8 @@ dependencies:
   google_fonts: ^6.0.0
   smooth_page_indicator: ^1.2.1
   flutter_native_splash: ^2.4.4
+  carousel_slider: ^5.1.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +67,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/files/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

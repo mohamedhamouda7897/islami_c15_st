@@ -34,7 +34,7 @@ class OnboardingWidget extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 40),
+        SizedBox(height: 30),
         Text(
           title2,
           textAlign: TextAlign.center,

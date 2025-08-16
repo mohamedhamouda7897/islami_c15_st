@@ -31,7 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: tabs[currentIndex],
+        body: Column(
+          children: [
+            Image.asset("assets/images/appbar_logo.png"),
+            Expanded(child: tabs[currentIndex]),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
